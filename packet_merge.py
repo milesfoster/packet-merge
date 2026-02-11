@@ -173,7 +173,8 @@ class PacketMergeCollector:
             for result in results["result"]["parameters"]:
 
                 # seperate "240.1@i" to "1" or 301.2.0@i to "2"
-                _instance = result["id"].split(".")[1][:1]
+                  _instance = (result["id"].split(".")[1])
+                  _instance = (_instance.split("@")[0])
 
                 # upconvert base 0 to base 1
                 _instance = int(_instance) + 1
