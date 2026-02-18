@@ -198,8 +198,8 @@ class PacketMergeCollector:
             decoders_store = self.hosts_decoders_store.get(host, {})
             for decode_num, params in host_data["decoders"].items():
                 if decode_num in decoders_store:
-                    # Packet drop deltas
-                    for key in ["l_main_packet_drop", "l_backup_packet_drop", "l_hitless_packet_drop"]:
+                    # Packet drop/Error count deltas
+                    for key in ["l_main_packet_drop", "l_backup_packet_drop", "l_hitless_packet_drop", "l_cc_error_count"]:
                         x, y = params.get(key, 0), decoders_store[decode_num].get(key, 0)
                         params["{}_delta".format(key)] = x - y if x > y else 0
                     
