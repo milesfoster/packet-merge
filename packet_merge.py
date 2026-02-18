@@ -153,96 +153,63 @@ class PacketMergeCollector:
             return error
 
     def parse_results(self, host, collection):
-
-        # inital tree
-        host_decoders = {host: {}}
-
-        # reference in
-        decoders = host_decoders[host]
-
-        results = self.fetch(host)
-
-        # import response
-        # from importlib import reload
-
-        # reload(response)
-        # results = copy.deepcopy(response.params)
+        # Initialize a consistent structure
+        host_data = {
+            "decoders": {},
+            "error": None
+        }
 
         try:
-
-            for result in results["result"]["parameters"]:
-
-                # seperate "240.1@i" to "1" or 301.2.0@i to "2"
-                  _instance = (result["id"].split(".")[1])
-                  _instance = (_instance.split("@")[0])
-
-                # upconvert base 0 to base 1
+            results = self.fetch(host)
+            
+            # parse results into individual decoder instances
+            for result in results.get("result", {}).get("parameters", []):
+                # parse instance id, update to base 1
+                _instance = result["id"].split(".")[1].split("@")[0]
                 _instance = int(_instance) + 1
 
-                # convert to bit rate from kbps
+                # value transformations
                 if "packet_rate" in result["name"]:
-                    result["value"] = result["value"] * 1000
-
-                # perform lookup for playout status enumeration
+                    result["value"] *= 1000
                 elif "playout_status" in result["name"]:
-                    result["value"] = self.status_lookup[result["value"]]
-
-                # perform lookup for link select enumeration
+                    result["value"] = self.status_lookup.get(result["value"], "Unknown")
                 elif "link_select" in result["name"]:
-                    result["value"] = self.link_select_lookup[result["value"]]
+                    result["value"] = self.link_select_lookup.get(result["value"], "Unknown")
 
-                if _instance not in decoders.keys():
-
-                    decoders.update(
-                        {
-                            _instance: {
-                                result["name"]: result["value"],
-                                "i_decoder": _instance,
-                                "as_ids": [result["id"]],
-                            }
-                        }
-                    )
-
+                # update or create the decoder entry
+                if _instance not in host_data["decoders"]:
+                    host_data["decoders"][_instance] = {
+                        result["name"]: result["value"],
+                        "i_decoder": _instance,
+                        "as_ids": [result["id"]],
+                    }
                 else:
+                    host_data["decoders"][_instance].update({result["name"]: result["value"]})
+                    host_data["decoders"][_instance]["as_ids"].append(result["id"])
 
-                    decoders[_instance].update({result["name"]: result["value"]})
-                    decoders[_instance]["as_ids"].append(result["id"])
-
-            decoders_store = self.hosts_decoders_store[host]
-
-            for decode_num, params in decoders.items():
-
-                if decode_num in decoders_store.keys():
-
+            # Calculate deltas
+            decoders_store = self.hosts_decoders_store.get(host, {})
+            for decode_num, params in host_data["decoders"].items():
+                if decode_num in decoders_store:
+                    # Packet drop deltas
                     for key in ["l_main_packet_drop", "l_backup_packet_drop", "l_hitless_packet_drop"]:
-
-                        x = params[key]
-                        y = decoders_store[decode_num][key]
-
-                        params.update({"{}_delta".format(key): x - y if x > y else 0})
-
-                    #decoders_store[decode_num].update(params)
+                        x, y = params.get(key, 0), decoders_store[decode_num].get(key, 0)
+                        params["{}_delta".format(key)] = x - y if x > y else 0
                     
-                    for key in ["s_main_multicast_address", "s_backup_multicast_address",]:
-
-                        t = params[key]
-                        u = decoders_store[decode_num][key]
-                        v = "Yes"
-                        z = "No"
+                    # Change detection
+                    for key in ["s_main_multicast_address", "s_backup_multicast_address"]:
+                        t, u = params.get(key), decoders_store[decode_num].get(key)
+                        params["{}_prev".format(key)] = u
+                        params["{}_changed".format(key)] = "No" if t == u else "Yes"
                     
-                        params.update({"{}_prev".format(key): u})
-                        params.update({"{}_changed".format(key): z if t == u else v})
-                        
                     decoders_store[decode_num].update(params)
-
                 else:
-
-                    decoders_store.update({decode_num: params})
-
-            collection.update(host_decoders)
+                    decoders_store[decode_num] = params
 
         except Exception as e:
-            print(e)
+            host_data["error"] = str(e)
+
+        collection[host] = host_data
 
     @property
     def collect(self):
