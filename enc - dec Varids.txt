@@ -1,0 +1,49 @@
+Decoder: 670HBX-X45-U16D_TR07 / 670HBX-X45-U8E8D_TR07
+
+IP Packet drop count main = 801.0.0 <input name="CompressedVideoIPPac.ipPacketDropCountDecoder.0.Main" id="801.0.0@i" size="8" type="text" readonly="readonly" value="" data-device-latest="979">
+
+IP Packet drop count backup = 801.0.1 <input name="CompressedVideoIPPac.ipPacketDropCountDecoder.0.Backup" id="801.0.1@i" size="8" type="text" readonly="readonly" value="" data-device-latest="986">
+
+IP Packet drop count hitless switch = 801.0.2 <input name="CompressedVideoIPPac.ipPacketDropCountDecoder.0.Hitless Switch" id="801.0.2@i" size="8" type="text" readonly="readonly" value="" data-device-latest="722">
+ 
+IP Packet Bit rate Main = 800.0.0 <input name="CompressedVideoIPPac.ipPacketBitRateDecoder.0.Main" id="800.0.0@i" size="8" type="text" readonly="readonly" value="" data-device-latest="1203649">
+ 
+IP Packet bit rate Backup = 800.0.1 <input name="CompressedVideoIPPac.ipPacketBitRateDecoder.0.Backup" id="800.0.1@i" size="8" type="text" readonly="readonly" value="" data-device-latest="1203639">
+ 
+IP Packet bit rate hitless switch = 800.0.2 <input name="CompressedVideoIPPac.ipPacketBitRateDecoder.0.Hitless Switch" id="800.0.2@i" size="8" type="text" readonly="readonly" value="" data-device-latest="1203649">
+
+CC error count = 814.0 <input name="inputStream.ccErrorCount.0" id="814.0@i" size="8" type="text" readonly="readonly" value="" data-device-latest="630">
+
+Skew = 223.0 <input name="CompressedStreamMPPM.skewDecoder.0" id="223.0@i" size="8" type="text" readonly="readonly" data-default-value="formula:0" value="0" data-device-latest="24"> 
+
+Playout status = 224.0 
+<select name="CompressedStreamMPPM.playoutStatusDecoder.0" id="224.0@i" disabled="disabled" readonly="readonly" data-default-value="formula:0" onchange="WebEASY.API.set(this.id);" data-device-latest="0">
+<option value="0" selected="">Merged</option>
+<option value="1">Main</option>
+<option value="2">Backup</option>
+</select>
+
+Video frame rate = 911.0 <input name="ProgramVideoMonitor.decoderVideoBitRate.0" id="911.0@s" size="8" type="text" readonly="readonly" value="" data-device-latest="59.94 Hz">
+
+Video resolution = 912.0 <input name="ProgramVideoMonitor.videoResolution.0" id="912.0@s" size="8" type="text" readonly="readonly" value="" data-device-latest="3840x2160">
+
+
+
+
+Encoder: MIO-APP-XS-2E2D / MIO-APP-XS-3E1D
+
+input video loss count = 602.0 <input name="EncoderInput.inputSdiLossCounter.0" id="602.0@i" size="8" type="text" readonly="readonly" value="" data-device-latest="2">
+
+input video present = 604.0
+<select name="EncoderInput.inputVideoPresent.0" id="604.0@i" disabled="disabled" readonly="readonly" data-default-value="formula:0" onchange="WebEASY.API.set(this.id);" data-device-latest="0">
+<option value="0" selected="">Present</option>
+<option value="1">Absent</option>
+</select>
+
+video bit rate = 613.0
+<input class="webeasytext-ro" name="EncoderBitRateContro.encVideoBitRate.0" id="613.0@i" type="text" size="8" value="200.001" readonly="readonly" data-format-default="200001" data-format-minimum="0" data-format-maximum="5000000" data-format-shift="0.0" data-format-nominator="1.0" data-format-denominator="1000.0" data-format-precision="3" data-format-unit="Mbps" data-default-value="formula:200001" data-device-latest="1172420">
+
+SDI Input CRC error count = 1209.0 <input name="SDIInput.sdiInputVideoCrcErrCount.0" id="1209.0@i" size="8" type="text" readonly="readonly" value="" data-device-latest="249">
+
+
+

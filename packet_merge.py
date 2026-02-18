@@ -64,6 +64,12 @@ class PacketMergeCollector:
             "name": "l_skew_milliseconds",
         }
 
+        self.cc_error_count = {
+            "id": "814.<replace>@i",
+            "type": "integer",
+            "name": "l_cc_error_count",
+        }
+
         self.link_select_lookup = {
             0: "Auto Packet Merge",
             1: "SFP 10G Main",
@@ -102,6 +108,7 @@ class PacketMergeCollector:
                 self.hitless_drop,
                 self.hitless_rate,
                 self.skew_milliseconds,
+                self.cc_error_count
             ]:
 
                 template_copy = copy.deepcopy(template)
