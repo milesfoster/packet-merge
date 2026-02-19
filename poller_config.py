@@ -21,12 +21,27 @@ class Plugin(InsitePlugin):
 
         documents = []
 
-        for ip, decoders in self.collector.collect.items():
+        for host, data in collector.collect.items():
+            # Handle host-level errors
+            if data["error"]:
+                documents.append({
+                    "host": host,
+                    "name": "merged",
+                    "fields": {
+                        "status": "error",
+                        "error_message": data["error"]
+                    }
+                })
+                continue
 
-            for _, params in decoders.items():
-
-                document = {"fields": params, "host": ip, "name": "merged"}
-
+            # Handle successful data
+            for _, params in data["decoders"].items():
+                document = {
+                    "fields": params, 
+                    "host": host, 
+                    "name": "merged",
+                    "status": "success"
+                }
                 documents.append(document)
 
         return json.dumps(documents)
