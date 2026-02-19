@@ -14,7 +14,7 @@ class PacketMergeCollector:
 
         self.decoders = []
         self.hosts = []
-        self.proto = "http"
+        self.proto = ""
 
         self.link_select = {"id": "221.<replace>@i", "type": "integer", "name": "link_select"}
         self.playout_status = {"id": "224.<replace>@i", "type": "integer", "name": "playout_status"}
@@ -126,17 +126,56 @@ class PacketMergeCollector:
             print(test_url)
             try:
                 r = requests.get(test_url, timeout=timeout, verify=False, allow_redirects=True)
-                self.proto = r.url.split(":", 1)[0]
+                return = "http"
 
             except requests.RequestException:
                 try:
                     r = requests.head(f"https://{host}", verify=False, timeout=timeout)
                     if r.ok:
-                        self.proto = "https"
+                        return "https"
                 except requests.RequestException:
                     raise ConnectionError(f"Could not connect to {host} using HTTP or HTTPS.")
 
-    def fetch(self, host):
+
+
+    def checkEndpoint(self, host, proto):
+
+            endpoint_url = f"{proto}://{host}/cgi-bin/cfgjsonrpc" 
+
+            try:
+                r = requests.get(endpoint_url, verify=False, timeout=5)
+
+                if r.status_code == 200:
+                    return 'cfgjsonrpc'
+                
+                else:
+                    # treat anything else (403/404/etc.) as failure
+                    raise requests.exceptions.HTTPError(f"Bad status: {r.status_code}")
+
+            except requests.RequestException:
+                # Try the .php endpoint
+                try:
+                    r = requests.head(
+                        f"{proto}://{host}/cgi-bin/cfgjsonrpc.php",
+                        verify=False,
+                        timeout=5
+                    )
+
+                    if r.ok:
+                        print('.php worked')
+                        return "cfgjsonrpc.php"
+
+                    else:
+                        raise ConnectionError(
+                            f"Bad status for .php endpoint: {r.status_code}"
+                        )
+
+                except requests.RequestException:
+                    raise ConnectionError(
+                        f"Could not find valid endpoint on {host}(cfgjsonrpc or cfgjsonrpc.php)."
+                    )
+
+    def fetch(self, host, proto, endpoint):
 
         try:
 
@@ -144,7 +183,7 @@ class PacketMergeCollector:
 
                 ## get the session ID from accessing the login.php site
                 resp = session.get(
-                    "%s://%s/login.php" % (self.proto, host),
+                    "%s://%s/login.php" % (proto, host),
                     verify=False,
                     timeout=15.0,
                 )
@@ -158,7 +197,8 @@ class PacketMergeCollector:
                     "id": 1,
                 }
 
-                url = "%s://%s/cgi-bin/cfgjsonrpc" % (self.proto, host)
+                url = "%s://%s/cgi-bin/%s" % (proto, host, endpoint)
+                print(url)
 
                 headers = {
                     "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -172,13 +212,17 @@ class PacketMergeCollector:
                     verify=False,
                     timeout=15.0,
                 )
-
+                print(response.status_code)
                 return json.loads(response.text)
 
         except Exception as error:
             return error
 
     def parse_results(self, host, collection):
+
+        proto = self.checkProto(host)
+        endpoint = self.checkEndpoint(host, proto, endpoint)
+        print(self.proto)
         # Initialize a consistent structure
         host_data = {
             "decoders": {},
@@ -186,7 +230,7 @@ class PacketMergeCollector:
         }
 
         try:
-            results = self.fetch(host)
+            results = self.fetch(host, endpoint)
             
             # parse results into individual decoder instances
             for result in results.get("result", {}).get("parameters", []):
