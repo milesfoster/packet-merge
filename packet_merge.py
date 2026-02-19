@@ -126,7 +126,7 @@ class PacketMergeCollector:
             print(test_url)
             try:
                 r = requests.get(test_url, timeout=timeout, verify=False, allow_redirects=True)
-                return = "http"
+                return "http"
 
             except requests.RequestException:
                 try:
@@ -221,7 +221,7 @@ class PacketMergeCollector:
     def parse_results(self, host, collection):
 
         proto = self.checkProto(host)
-        endpoint = self.checkEndpoint(host, proto, endpoint)
+        endpoint = self.checkEndpoint(host, proto)
         print(self.proto)
         # Initialize a consistent structure
         host_data = {
@@ -230,7 +230,7 @@ class PacketMergeCollector:
         }
 
         try:
-            results = self.fetch(host, endpoint)
+            results = self.fetch(host, proto, endpoint)
             
             # parse results into individual decoder instances
             for result in results.get("result", {}).get("parameters", []):
