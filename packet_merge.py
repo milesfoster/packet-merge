@@ -317,10 +317,8 @@ def main():
 
     while inputQuit != "q":
         documents = []
-        
-        current_results = collector.collect
 
-        for host, data in current_results.items():
+        for host, data in collector.collect.items():
             # Handle host-level errors
             if data["error"]:
                 documents.append({
