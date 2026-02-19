@@ -220,8 +220,6 @@ class PacketMergeCollector:
 
     def parse_results(self, host, collection):
 
-        proto = self.checkProto(host)
-        endpoint = self.checkEndpoint(host, proto)
         print(self.proto)
         # Initialize a consistent structure
         host_data = {
@@ -230,6 +228,9 @@ class PacketMergeCollector:
         }
 
         try:
+
+            proto = self.checkProto(host)
+            endpoint = self.checkEndpoint(host, proto)
             results = self.fetch(host, proto, endpoint)
             
             # parse results into individual decoder instances
