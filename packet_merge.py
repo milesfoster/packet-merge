@@ -245,26 +245,41 @@ class PacketMergeCollector:
 
 def main():
 
-    params = {"hosts": ["192.168.0.16"], "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9]}
+    params = {"hosts": ["172.16.168.119"], "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9]}
 
     collector = PacketMergeCollector(**params)
 
     inputQuit = False
 
-    while inputQuit is not "q":
-
+    while inputQuit != "q":
         documents = []
+        
+        current_results = collector.collect
 
-        for host, decoders in collector.collect.items():
+        for host, data in current_results.items():
+            # Handle host-level errors
+            if data["error"]:
+                documents.append({
+                    "host": host,
+                    "name": "merged",
+                    "fields": {
+                        "status": "error",
+                        "error_message": data["error"]
+                    }
+                })
+                continue
 
-            for _, params in decoders.items():
-
-                document = {"fields": params, "host": host, "name": "merged"}
-
+            # Handle successful data
+            for _, params in data["decoders"].items():
+                document = {
+                    "fields": params, 
+                    "host": host, 
+                    "name": "merged",
+                    "status": "success"
+                }
                 documents.append(document)
 
         print(json.dumps(documents, indent=1))
-
         inputQuit = input("\nType q to quit or just hit enter: ")
 
 
