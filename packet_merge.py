@@ -117,6 +117,25 @@ class PacketMergeCollector:
 
                 self.parameters.append(template_copy)
 
+    def checkProto(self, host, timeout=3):
+            """
+            Determines whether a host supports HTTP or HTTPS by testing HTTP first
+            and following redirects. Falls back to HTTPS if HTTP fails completely.
+            """
+            test_url = f"http://{host}"
+            print(test_url)
+            try:
+                r = requests.get(test_url, timeout=timeout, verify=False, allow_redirects=True)
+                self.proto = r.url.split(":", 1)[0]
+
+            except requests.RequestException:
+                try:
+                    r = requests.head(f"https://{host}", verify=False, timeout=timeout)
+                    if r.ok:
+                        self.proto = "https"
+                except requests.RequestException:
+                    raise ConnectionError(f"Could not connect to {host} using HTTP or HTTPS.")
+
     def fetch(self, host):
 
         try:
