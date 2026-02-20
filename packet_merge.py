@@ -93,6 +93,9 @@ class PacketMergeCollector:
 
             if "proto" in key and value:
                 self.proto = value
+            
+            if "group" in key and value:
+                self.group = value
 
         for decode in self.decoders:
 
@@ -251,7 +254,7 @@ class PacketMergeCollector:
                 if _instance not in host_data["decoders"]:
                     host_data["decoders"][_instance] = {
                         result["name"]: result["value"],
-                        "i_decoder": _instance,
+                        "s_decoder": str(_instance) + "-" + self.group,
                         "as_ids": [result["id"]],
                     }
                 else:
@@ -309,7 +312,7 @@ class PacketMergeCollector:
 
 def main():
 
-    params = {"hosts": ["172.16.168.119"], "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9]}
+    params = {"hosts": ["172.16.168.119"], "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9], "group": "test"}
 
     collector = PacketMergeCollector(**params)
 
