@@ -21,7 +21,7 @@ class Plugin(InsitePlugin):
 
         documents = []
 
-        for host, data in collector.collect.items():
+        for host, data in self.collector.collect.items():
             # Handle host-level errors
             if data["error"]:
                 documents.append({
