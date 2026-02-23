@@ -264,7 +264,7 @@ class PacketMergeCollector:
                 if _instance not in host_data["decoders"]:
                     host_data["decoders"][_instance] = {
                         result["name"]: result["value"],
-                        "s_decoder": f"{_instance}-{self.group}",
+                        "s_decoder": name,
                         "as_ids": [result["id"]],
                     }
                 else:
@@ -322,7 +322,7 @@ class PacketMergeCollector:
 
 def main():
 
-    params = {"hosts": hosts,
+    params = {"hosts": ["172.16.168.119"],
                 "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9],
                 "group": "test", # optional, only used if no channel name provided
                 "mapping": {
