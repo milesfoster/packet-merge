@@ -326,7 +326,7 @@ class PacketMergeCollector:
 def main():
 
     params = {"hosts": ["172.16.168.119"],
-                "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
                 "group": "test", # optional, only used if no decoder name provided
                 "mapping": { # optional, decoder number will still return if no mapping is provided
                 1: "dec1",
