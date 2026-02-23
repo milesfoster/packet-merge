@@ -258,7 +258,10 @@ class PacketMergeCollector:
                 name = self.mapping.get(_instance)
 
                 if not name:
-                    name = f"{_instance}-{self.group}"
+                    if self.group:
+                        name = f"{_instance}-{self.group}"
+                    else:
+                        name = str(_instance)
 
                 # update or create the decoder entry
                 if _instance not in host_data["decoders"]:
