@@ -15,6 +15,7 @@ class PacketMergeCollector:
         self.decoders = []
         self.hosts = []
         self.proto = ""
+        self.mapping = {}
 
         self.link_select = {"id": "221.<replace>@i", "type": "integer", "name": "link_select"}
         self.playout_status = {"id": "224.<replace>@i", "type": "integer", "name": "playout_status"}
@@ -96,6 +97,9 @@ class PacketMergeCollector:
             
             if "group" in key and value:
                 self.group = value
+                
+            if "mapping" in key and value:
+                self.mapping = value
 
         for decode in self.decoders:
 
@@ -250,11 +254,17 @@ class PacketMergeCollector:
                 elif "link_select" in result["name"]:
                     result["value"] = self.link_select_lookup.get(result["value"], "Unknown")
 
+                # check for decoder mapping
+                name = self.mapping.get(_instance)
+
+                if not name:
+                    name = f"{_instance}-{self.group}"
+
                 # update or create the decoder entry
                 if _instance not in host_data["decoders"]:
                     host_data["decoders"][_instance] = {
                         result["name"]: result["value"],
-                        "s_decoder": str(_instance) + "-" + self.group,
+                        "s_decoder": f"{_instance}-{self.group}",
                         "as_ids": [result["id"]],
                     }
                 else:
@@ -312,7 +322,15 @@ class PacketMergeCollector:
 
 def main():
 
-    params = {"hosts": ["172.16.168.119"], "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9], "group": "test"}
+    params = {"hosts": hosts,
+                "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                "group": "test", # optional, only used if no channel name provided
+                "mapping": {
+                1: "chan1",
+                2: "chan2",
+                3: "chan4",
+                4: "chan4"
+                }}
 
     collector = PacketMergeCollector(**params)
 
