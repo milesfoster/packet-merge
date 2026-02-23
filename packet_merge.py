@@ -80,6 +80,18 @@ class PacketMergeCollector:
         }
         self.status_lookup = {0: "Merged", 1: "Main", 2: "Backup"}
 
+        self.psd_provider_name = {
+            "id": "705.<replace>@s",
+            "type": "string",
+            "name": "s_psd_provider_name",
+        }
+
+        self.psd_program_name = {
+            "id": "706.<replace>@s",
+            "type": "string",
+            "name": "s_psd_program_name",
+        }
+
         self.parameters = []
 
         for key, value in kwargs.items():
@@ -115,7 +127,8 @@ class PacketMergeCollector:
                 self.hitless_drop,
                 self.hitless_rate,
                 self.skew_milliseconds,
-                self.cc_error_count
+                self.cc_error_count,
+                self.psd_provider_name
             ]:
 
                 template_copy = copy.deepcopy(template)
