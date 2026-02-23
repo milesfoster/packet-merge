@@ -128,7 +128,8 @@ class PacketMergeCollector:
                 self.hitless_rate,
                 self.skew_milliseconds,
                 self.cc_error_count,
-                self.psd_provider_name
+                self.psd_provider_name,
+                self.psd_program_name
             ]:
 
                 template_copy = copy.deepcopy(template)
