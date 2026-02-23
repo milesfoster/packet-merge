@@ -17,8 +17,8 @@ class Plugin(InsitePlugin):
 
             params = {"hosts": ["172.16.168.119"],
                         "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                        "group": "test", # optional, only used if no decoder name provided
-                        "mapping": {
+                        "group": "test", # optional, only used if no decoder name provided in mapping
+                        "mapping": { # optional, decoder number will still return if no mapping is provided
                         1: "dec1",
                         2: "dec2",
                         3: "dec3",
