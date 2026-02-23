@@ -15,7 +15,28 @@ class Plugin(InsitePlugin):
 
         except Exception:
 
-            params = {"hosts": hosts, "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9], "group": "test"}
+            params = {"hosts": ["172.16.168.119"],
+                        "decoders": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                        "group": "test", # optional, only used if no decoder name provided
+                        "mapping": {
+                        1: "dec1",
+                        2: "dec2",
+                        3: "dec3",
+                        4: "dec4",
+                        5: "dec5",
+                        6: "dec6",
+                        7: "dec7",
+                        8: "dec8",
+                        9: "dec9",
+                        10: "dec10",
+                        11: "dec11",
+                        12: "dec12",
+                        13: "dec13",
+                        14: "dec14",
+                        15: "dec15",
+                        16: "dec16",
+                        }}
+
 
             self.collector = PacketMergeCollector(**params)
 
