@@ -147,13 +147,19 @@ class PacketMergeCollector:
             print(test_url)
             try:
                 r = requests.get(test_url, timeout=timeout, verify=False, allow_redirects=True)
-                return "http"
+                # Check if connection was upgraded
+                if r.url.startswith("https://"):
+                    return "https"
+                else:
+                    return "http"
+                    
 
             except requests.RequestException:
                 try:
                     r = requests.head(f"https://{host}", verify=False, timeout=timeout)
                     if r.ok:
                         return "https"
+
                 except requests.RequestException:
                     raise ConnectionError(f"Could not connect to {host} using HTTP or HTTPS.")
 

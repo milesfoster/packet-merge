@@ -43,7 +43,6 @@ class Plugin(InsitePlugin):
         documents = []
 
         for host, data in self.collector.collect.items():
-            # Handle host-level errors
             if data["error"]:
                 documents.append({
                     "host": host,
@@ -55,7 +54,6 @@ class Plugin(InsitePlugin):
                 })
                 continue
 
-            # Handle successful data
             for _, params in data["decoders"].items():
                 document = {
                     "fields": params, 
